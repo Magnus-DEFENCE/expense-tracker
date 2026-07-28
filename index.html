@@ -4,14 +4,56 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Expense Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <div class="app">
+  <!-- ===================== AUTH VIEW ===================== -->
+  <div id="authView" class="auth-wrapper">
+    <div class="auth-card">
+      <div class="brand">
+        <span class="brand-icon">◆</span>
+        <span class="brand-name">Expense Tracker</span>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="loginTabBtn">Log In</button>
+        <button class="auth-tab" id="signupTabBtn">Sign Up</button>
+      </div>
+
+      <form id="loginForm" class="auth-form">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" required />
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" required />
+        <button type="submit" class="primary-btn">Log In</button>
+      </form>
+
+      <form id="signupForm" class="auth-form hidden">
+        <label>Email</label>
+        <input type="email" id="signupEmail" placeholder="you@example.com" required />
+        <label>Password</label>
+        <input type="password" id="signupPassword" placeholder="At least 6 characters" required minlength="6" />
+        <button type="submit" class="primary-btn">Create Account</button>
+      </form>
+
+      <p id="authMsg" class="auth-msg"></p>
+    </div>
+  </div>
+
+  <!-- ===================== APP VIEW ===================== -->
+  <div id="appView" class="app hidden">
     <header>
-      <h1>💸 Expense Tracker</h1>
-      <p class="subtitle">Track your income and expenses</p>
+      <div class="header-left">
+        <span class="brand-icon small">◆</span>
+        <h1>Expense Tracker</h1>
+      </div>
+      <div class="header-right">
+        <span id="userEmail" class="user-email"></span>
+        <button id="logoutBtn" class="ghost-btn">Log Out</button>
+      </div>
     </header>
 
     <section class="summary-cards">
@@ -45,7 +87,7 @@
         </div>
         <div class="form-row">
           <input type="date" id="date" required />
-          <button type="submit">Add Transaction</button>
+          <button type="submit" class="primary-btn">Add Transaction</button>
         </div>
       </form>
     </section>
@@ -64,15 +106,14 @@
             <th></th>
           </tr>
         </thead>
-        <tbody id="transactionBody">
-          <!-- rows injected by JS -->
-        </tbody>
+        <tbody id="transactionBody"></tbody>
       </table>
     </section>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
+  <script src="auth.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

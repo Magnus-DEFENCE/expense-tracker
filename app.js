@@ -1,3 +1,5 @@
+// ===================== TRANSACTIONS LOGIC =====================
+
 const form = document.getElementById("transactionForm");
 const tableBody = document.getElementById("transactionBody");
 const statusMsg = document.getElementById("statusMsg");
@@ -87,12 +89,19 @@ function escapeHtml(str) {
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  const { data: { user } } = await supabaseClient.auth.getUser();
+  if (!user) {
+    setStatus("You must be logged in to add a transaction.", true);
+    return;
+  }
+
   const newTx = {
     type: document.getElementById("type").value,
     amount: parseFloat(document.getElementById("amount").value),
     description: document.getElementById("description").value.trim(),
     category: document.getElementById("category").value.trim(),
     date: document.getElementById("date").value,
+    user_id: user.id,
   };
 
   setStatus("Saving transaction...");
@@ -124,5 +133,3 @@ async function deleteTransaction(id) {
 
   await loadTransactions();
 }
-
-loadTransactions();
