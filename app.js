@@ -40,6 +40,8 @@ async function loadTransactions() {
   renderTransactions(data);
   renderTotals(data);
   renderCategoryCards(data);
+  cachedTransactions = data;
+  renderChart(data, currentChartType);
   setStatus(`${data.length} transaction(s) loaded.`);
 
   // Reveal the app content and hide the loading spinner now that data is ready
@@ -203,4 +205,125 @@ async function deleteTransaction(id) {
   }
 
   await loadTransactions();
+}// ===================== CHARTS =====================
+
+const CHART_COLORS = ["#7c9070", "#b5533d", "#c9a227", "#5b7fa6", "#9370b5", "#c97b4a", "#4a9691", "#a35d7a"];
+
+let currentChart = null;
+let currentChartType = "pie";
+let cachedTransactions = [];
+
+function renderChart(transactions, type) {
+  const canvas = document.getElementById("expenseChart");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  if (currentChart) {
+    currentChart.destroy();
+  }
+
+  if (type === "pie") {
+    const categoryTotals = {};
+    transactions.forEach((tx) => {
+      if (tx.type !== "expense") return;
+      const cat = tx.category || "Other";
+      categoryTotals[cat] = (categoryTotals[cat] || 0) + Number(tx.amount);
+    });
+
+    const labels = Object.keys(categoryTotals);
+    const data = Object.values(categoryTotals);
+
+    currentChart = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels,
+        datasets: [{
+          data,
+          backgroundColor: CHART_COLORS.slice(0, labels.length),
+          borderWidth: 0,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "bottom", labels: { font: { family: "Inter", size: 12 }, color: "#2f2b22" } },
+        },
+      },
+    });
+  }
+
+  if (type === "bar") {
+    let income = 0, expense = 0;
+    transactions.forEach((tx) => {
+      if (tx.type === "income") income += Number(tx.amount);
+      else expense += Number(tx.amount);
+    });
+
+    currentChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Income", "Expense"],
+        datasets: [{
+          data: [income, expense],
+          backgroundColor: ["#5f8654", "#b5533d"],
+          borderRadius: 6,
+          maxBarThickness: 80,
+        }],
+      },
+      options: {
+        responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+      },
+    });
+  }
+
+  if (type === "line") {
+    const dailyTotals = {};
+    transactions.forEach((tx) => {
+      if (!dailyTotals[tx.date]) dailyTotals[tx.date] = { income: 0, expense: 0 };
+      if (tx.type === "income") dailyTotals[tx.date].income += Number(tx.amount);
+      else dailyTotals[tx.date].expense += Number(tx.amount);
+    });
+
+    const sortedDates = Object.keys(dailyTotals).sort();
+
+    currentChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: sortedDates,
+        datasets: [
+          {
+            label: "Income",
+            data: sortedDates.map((d) => dailyTotals[d].income),
+            borderColor: "#5f8654",
+            backgroundColor: "transparent",
+            tension: 0.3,
+          },
+          {
+            label: "Expense",
+            data: sortedDates.map((d) => dailyTotals[d].expense),
+            borderColor: "#b5533d",
+            backgroundColor: "transparent",
+            tension: 0.3,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "bottom" } },
+      },
+    });
+  }
 }
+
+document.querySelectorAll(".chart-tab").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".chart-tab").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentChartType = btn.dataset.chart;
+    renderChart(cachedTransactions, currentChartType);
+  });
+});

@@ -457,3 +457,51 @@ tbody tr:last-child td {
     gap: 12px;
   }
 }
+
+.chart-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.chart-tabs {
+  display: flex;
+  gap: 8px;
+  background: var(--sage-light);
+  border-radius: 9px;
+  padding: 4px;
+  margin-bottom: 18px;
+  max-width: 300px;
+}
+
+.chart-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 7px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sage-dark);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.chart-tab.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.chart-tab:hover:not(.active) {
+  background: rgba(255,255,255,0.5);
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 280px;
+}

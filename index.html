@@ -82,6 +82,17 @@
     <div id="categoryCards" class="category-cards">
       <!-- injected by JS -->
     </div>
+    <div class="section-bar">Overview</div>
+    <section class="chart-section">
+      <div class="chart-tabs">
+        <button class="chart-tab active" data-chart="pie">Pie</button>
+        <button class="chart-tab" data-chart="bar">Bar</button>
+        <button class="chart-tab" data-chart="line">Line</button>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="expenseChart"></canvas>
+      </div>
+    </section>
 
     <div class="section-bar">Add Transaction</div>
     <section class="form-section">
@@ -130,5 +141,6 @@
   <script src="config.js"></script>
   <script src="auth.js"></script>
   <script src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
