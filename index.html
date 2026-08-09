@@ -45,6 +45,12 @@
 
   <!-- ===================== APP VIEW ===================== -->
   <div id="appView" class="app hidden">
+    <div id="appLoading" class="app-loading">
+      <div class="spinner"></div>
+      <p>Loading your data...</p>
+    </div>
+
+    <div id="appContent" class="app-content hidden">
     <header>
       <div class="header-left">
         <span class="brand-icon small">◆</span>
@@ -56,6 +62,7 @@
       </div>
     </header>
 
+    <div class="section-bar">Summary</div>
     <section class="summary-cards">
       <div class="card income">
         <span class="label">Total Income</span>
@@ -71,6 +78,12 @@
       </div>
     </section>
 
+    <div class="section-bar">By Category</div>
+    <div id="categoryCards" class="category-cards">
+      <!-- injected by JS -->
+    </div>
+
+    <div class="section-bar">Add Transaction</div>
     <section class="form-section">
       <h2>Add Transaction</h2>
       <form id="transactionForm">
@@ -92,6 +105,7 @@
       </form>
     </section>
 
+    <div class="section-bar">Transactions</div>
     <section class="list-section">
       <h2>Transactions</h2>
       <div id="statusMsg" class="status-msg"></div>
@@ -109,6 +123,7 @@
         <tbody id="transactionBody"></tbody>
       </table>
     </section>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

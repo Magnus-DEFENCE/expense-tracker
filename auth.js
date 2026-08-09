@@ -74,6 +74,9 @@ function showApp(user) {
   authView.classList.add("hidden");
   appView.classList.remove("hidden");
   userEmailEl.textContent = user.email;
+  // Reset to loading state each time the app is shown (e.g. fresh login)
+  document.getElementById("appLoading").classList.remove("hidden");
+  document.getElementById("appContent").classList.add("hidden");
 }
 
 function showAuth() {

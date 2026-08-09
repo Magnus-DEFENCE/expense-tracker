@@ -32,12 +32,19 @@ async function loadTransactions() {
   if (error) {
     console.error(error);
     setStatus("Error loading transactions: " + error.message, true);
+    document.getElementById("appLoading").classList.add("hidden");
+    document.getElementById("appContent").classList.remove("hidden");
     return;
   }
 
   renderTransactions(data);
   renderTotals(data);
+  renderCategoryCards(data);
   setStatus(`${data.length} transaction(s) loaded.`);
+
+  // Reveal the app content and hide the loading spinner now that data is ready
+  document.getElementById("appLoading").classList.add("hidden");
+  document.getElementById("appContent").classList.remove("hidden");
 }
 
 function renderTransactions(transactions) {
@@ -78,6 +85,70 @@ function renderTotals(transactions) {
   totalIncomeEl.textContent = formatCurrency(income);
   totalExpenseEl.textContent = formatCurrency(expense);
   totalBalanceEl.textContent = formatCurrency(income - expense);
+}
+
+// Simple icon lookup based on common category names.
+// Falls back to a generic tag icon if the category isn't recognized.
+const CATEGORY_ICONS = {
+  food: "🛒",
+  grocery: "🛒",
+  groceries: "🛒",
+  rent: "🏠",
+  housing: "🏠",
+  restaurant: "🍽️",
+  dining: "🍽️",
+  transport: "🚗",
+  transportation: "🚗",
+  shopping: "🛍️",
+  bills: "💡",
+  utilities: "💡",
+  subscriptions: "🔁",
+  subscription: "🔁",
+  activities: "🎉",
+  entertainment: "🎉",
+  health: "🩺",
+  medical: "🩺",
+  education: "📚",
+  salary: "💰",
+  income: "💰",
+  savings: "🏦",
+  load: "📱",
+  other: "🏷️",
+};
+
+function getCategoryIcon(category) {
+  const key = (category || "").trim().toLowerCase();
+  return CATEGORY_ICONS[key] || "🏷️";
+}
+
+function renderCategoryCards(transactions) {
+  const categoryTotals = {};
+
+  transactions.forEach((tx) => {
+    if (tx.type !== "expense") return; // category breakdown focuses on spending
+    const cat = tx.category || "Other";
+    categoryTotals[cat] = (categoryTotals[cat] || 0) + Number(tx.amount);
+  });
+
+  const container = document.getElementById("categoryCards");
+  const categories = Object.keys(categoryTotals);
+
+  if (categories.length === 0) {
+    container.innerHTML = `<p style="color:#8a8473; font-size:13px;">No expenses yet — add one below to see your breakdown.</p>`;
+    return;
+  }
+
+  container.innerHTML = categories
+    .map((cat) => `
+      <div class="category-card">
+        <div class="cat-top">
+          <span class="cat-icon">${getCategoryIcon(cat)}</span>
+          <span>${escapeHtml(cat)}</span>
+        </div>
+        <div class="cat-amount">${formatCurrency(categoryTotals[cat])}</div>
+      </div>
+    `)
+    .join("");
 }
 
 function escapeHtml(str) {
